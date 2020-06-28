@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - php --version
+      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+      - composer --version
+  pre_build:
+    commands:
+      - ls -la
+  build:
+    commands:
+      # Build
+      #- php bin/console generate:bundle --namespace=Acme/Bundle/BlogBundle --no-interaction
+      #- COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload
+      - COMPOSER_MEMORY_LIMIT=-1 composer require laminas/laminas-eventmanager
+      - COMPOSER_MEMORY_LIMIT=-1 composer require laminas/laminas-code
+      - COMPOSER_MEMORY_LIMIT=-1 APP_ENV=dev APP_DEBUG=0 composer install --optimize-autoloader
+      - COMPOSER_MEMORY_LIMIT=-1 APP_ENV=dev APP_DEBUG=0 composer dump-autoload --optimize --classmap-authoritative
+      - APP_ENV=dev APP_DEBUG=0 php bin/console cache:clear
+  post_build:
+    commands:
+      - ls -la
+      - ls -la public
+artifacts:
+  files:
+    - '**/*'
